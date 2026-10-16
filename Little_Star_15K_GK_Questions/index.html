@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-accent="violet">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>Little Star GK — Premium Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================================
+       DECORATIVE BACKGROUND
+       ============================================ -->
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <!-- ============================================
+       LOGIN SCREEN
+       ============================================ -->
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card glass">
+      <div class="login-bubbles">
+        <span class="bubble b1">🎈</span>
+        <span class="bubble b2">⭐</span>
+        <span class="bubble b3">🌈</span>
+        <span class="bubble b4">🦋</span>
+        <span class="bubble b5">🌟</span>
+        <span class="bubble b6">🎈</span>
+      </div>
+      <div class="login-logo">
+        <span class="logo-emoji">🧠</span>
+        <h1 class="logo-title">Little Star GK</h1>
+        <p class="logo-subtitle">Premium Learning World</p>
+      </div>
+      <p class="login-welcome">Welcome back, little genius! 👋<br/>Enter the secret password to begin your adventure.</p>
+      <div class="login-form">
+        <div class="input-wrap">
+          <input
+            type="password"
+            id="passwordInput"
+            placeholder="Type password here..."
+            autocomplete="off"
+          />
+          <button id="loginBtn" class="login-btn" aria-label="Login">
+            <span class="btn-emoji">🚀</span>
+            <span>Enter Now</span>
+          </button>
+        </div>
+        <p id="loginError" class="login-error"></p>
+      </div>
+      <div class="login-stars">
+        <span>⭐</span><span>✨</span><span>🌟</span><span>⭐</span><span>✨</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       MAIN APP
+       ============================================ -->
+  <section id="mainApp" class="main-app hidden">
+
+    <!-- TOP NAVBAR -->
+    <header class="navbar glass">
+      <div class="nav-left">
+        <button id="menuToggle" class="icon-btn" aria-label="Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="nav-brand">
+          <span class="brand-emoji">🧠</span>
+          <span class="brand-text">Little Star <span class="brand-accent">GK</span></span>
+        </div>
+      </div>
+      <div class="nav-stats">
+        <div class="nav-stat" title="Stars earned">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span id="totalStars" class="stat-value">0</span>
+        </div>
+        <div class="nav-stat" title="Correct answers">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="totalCorrect" class="stat-value">0</span>
+        </div>
+        <div class="nav-stat streak-badge" title="Current streak">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+          <span id="currentStreak" class="stat-value">0</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <button id="settingsBtn" class="icon-btn" aria-label="Settings">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button id="logoutBtn" class="icon-btn" aria-label="Logout">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================================
+         SETTINGS SIDEBAR
+         ============================================ -->
+    <aside id="settingsSidebar" class="settings-sidebar">
+      <div class="settings-overlay" id="settingsOverlay"></div>
+      <div class="settings-panel glass">
+        <div class="settings-header">
+          <h2>Theme Settings</h2>
+          <button id="closeSettings" class="icon-btn" aria-label="Close">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">MODE</label>
+          <div class="mode-switch">
+            <button class="mode-option" data-theme-set="dark">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+              Dark
+            </button>
+            <button class="mode-option" data-theme-set="light">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Light
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">ACCENT COLOR</label>
+          <div class="accent-grid">
+            <button class="accent-chip" data-accent-set="violet" style="--c:#7c3aed"></button>
+            <button class="accent-chip" data-accent-set="rose" style="--c:#e11d48"></button>
+            <button class="accent-chip" data-accent-set="amber" style="--c:#d97706"></button>
+            <button class="accent-chip" data-accent-set="emerald" style="--c:#059669"></button>
+            <button class="accent-chip" data-accent-set="sky" style="--c:#0284c7"></button>
+            <button class="accent-chip" data-accent-set="pink" style="--c:#db2777"></button>
+            <button class="accent-chip" data-accent-set="orange" style="--c:#ea580c"></button>
+            <button class="accent-chip" data-accent-set="lime" style="--c:#65a30d"></button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">CUSTOM ACCENT</label>
+          <div class="custom-accent-row">
+            <input type="color" id="customAccentInput" value="#7c3aed" />
+            <input type="text" id="customAccentHex" value="#7c3aed" maxlength="7" />
+            <button id="applyCustomAccent" class="apply-btn">Apply</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">FONT SIZE</label>
+          <div class="slider-row">
+            <span class="slider-edge">Aa</span>
+            <input type="range" id="fontSizeSlider" min="0" max="3" step="1" value="1" />
+            <span class="slider-edge large">Aa</span>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">ANIMATIONS</label>
+          <div class="toggle-row">
+            <span>Enable Animations</span>
+            <label class="switch">
+              <input type="checkbox" id="animationsToggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">BORDER RADIUS</label>
+          <div class="slider-row">
+            <span class="slider-edge">▢</span>
+            <input type="range" id="radiusSlider" min="0" max="3" step="1" value="2" />
+            <span class="slider-edge">◯</span>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <label class="settings-label">QUIZ LENGTH</label>
+          <div class="quiz-length-options">
+            <button class="quiz-length-btn" data-ql="5">5</button>
+            <button class="quiz-length-btn active" data-ql="10">10</button>
+            <button class="quiz-length-btn" data-ql="15">15</button>
+            <button class="quiz-length-btn" data-ql="20">20</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <button id="resetProgress" class="danger-btn">Reset Progress</button>
+        </div>
+
+        <div class="settings-footer">
+          <p>Little Star GK v2.0</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============================================
+         HOME PAGE
+         ============================================ -->
+    <main id="homePage" class="page active">
+      <!-- HERO -->
+      <section class="hero glass">
+        <div class="hero-content">
+          <div class="hero-badge">⭐ Premium Edition</div>
+          <h1 class="hero-title">Hello, Little Star! 👋</h1>
+          <p class="hero-subtitle">Pick a topic below and start your GK adventure. Learn smarter, score higher, and earn more stars!</p>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hs-value" id="categoriesCount">0</span>
+              <span class="hs-label">Topics</span>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-stat">
+              <span class="hs-value" id="totalQuestionsCount">0</span>
+              <span class="hs-label">Questions</span>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-stat">
+              <span class="hs-value" id="attemptedCount">0</span>
+              <span class="hs-label">Attempted</span>
+            </div>
+            <div class="hero-divider"></div>
+            <div class="hero-stat">
+              <span class="hs-value" id="accuracyPct">0%</span>
+              <span class="hs-label">Accuracy</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-decoration">
+          <div class="hero-ring"></div>
+          <div class="hero-ring ring-2"></div>
+          <span class="hero-emoji">🏆</span>
+        </div>
+      </section>
+
+      <!-- MODE + SEARCH -->
+      <section class="toolbar">
+        <div class="mode-toggle glass">
+          <button class="mode-btn active" data-mode="quiz">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 12h12M6 6h12M6 18h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <span>Quiz</span>
+          </button>
+          <button class="mode-btn" data-mode="learn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            <span>Learn</span>
+          </button>
+        </div>
+        <div class="search-box glass">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="searchInput" placeholder="Search a topic..." />
+        </div>
+      </section>
+
+      <!-- FILTER CHIPS -->
+      <section class="filter-chips">
+        <button class="filter-chip active" data-filter="all">All Topics</button>
+        <button class="filter-chip" data-filter="started">In Progress</button>
+        <button class="filter-chip" data-filter="completed">Mastered</button>
+        <button class="filter-chip" data-filter="not-started">New</button>
+      </section>
+
+      <!-- CATEGORIES GRID -->
+      <section id="categoriesGrid" class="categories-grid"></section>
+    </main>
+
+    <!-- ============================================
+         QUIZ PAGE
+         ============================================ -->
+    <main id="quizPage" class="page">
+      <div class="quiz-top">
+        <button class="back-btn" id="backToHome">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Back</span>
+        </button>
+        <div class="quiz-title">
+          <span id="quizCategoryEmoji" class="quiz-emoji">📚</span>
+          <div>
+            <h2 id="quizCategoryName">Category</h2>
+            <span id="modeBadge" class="quiz-mode-pill">Quiz Mode</span>
+          </div>
+        </div>
+        <div class="quiz-progress-pill">
+          <span id="currentQNum">1</span>/<span id="totalQNum">10</span>
+        </div>
+      </div>
+
+      <div class="progress-bar glass">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
+      <div class="quiz-body">
+        <div class="question-card glass" id="questionCard">
+          <div class="question-top">
+            <span class="question-emoji-wrap">
+              <span class="question-emoji" id="questionEmoji">🤔</span>
+            </span>
+            <div class="question-text-wrap">
+              <span class="question-label">Question</span>
+              <h3 id="questionText" class="question-text">Loading...</h3>
+            </div>
+          </div>
+
+          <div class="options-grid" id="optionsGrid"></div>
+
+          <div class="feedback-box hidden" id="feedbackBox">
+            <span id="feedbackEmoji" class="feedback-emoji"></span>
+            <div class="feedback-content">
+              <p id="feedbackText" class="feedback-text"></p>
+              <p id="feedbackAnswer" class="feedback-answer"></p>
+            </div>
+          </div>
+
+          <div class="quiz-actions">
+            <button id="showAnswerBtn" class="ghost-btn hidden">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+              Show Answer
+            </button>
+            <button id="nextBtn" class="primary-btn hidden">
+              <span>Next Question</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <aside class="quiz-sidebar">
+          <div class="side-stat-card glass">
+            <h4 class="side-title">Live Stats</h4>
+            <div class="side-stat-row">
+              <span>⭐ Stars</span>
+              <span id="topicStars" class="side-stat-value">0</span>
+            </div>
+            <div class="side-stat-row">
+              <span>✅ Correct</span>
+              <span id="topicCorrect" class="side-stat-value">0</span>
+            </div>
+            <div class="side-stat-row">
+              <span>❌ Wrong</span>
+              <span id="topicWrong" class="side-stat-value">0</span>
+            </div>
+            <div class="side-stat-row">
+              <span>📊 Accuracy</span>
+              <span id="topicAccuracy" class="side-stat-value">0%</span>
+            </div>
+            <div class="side-progress">
+              <div class="side-progress-label">
+                <span>Topic Progress</span>
+                <span id="topicProgressPct">0%</span>
+              </div>
+              <div class="mini-progress-bar">
+                <div id="topicProgressFill" class="mini-progress-fill"></div>
+              </div>
+            </div>
+          </div>
+          <button id="restartTopicBtn" class="ghost-btn full">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restart Topic
+          </button>
+        </aside>
+      </div>
+    </main>
+
+    <!-- ============================================
+         RESULTS PAGE
+    -->
+    <main id="resultPage" class="page">
+      <div class="result-card glass">
+        <div class="result-rings">
+          <div class="result-ring r1"></div>
+          <div class="result-ring r2"></div>
+          <div class="result-ring r3"></div>
+          <div class="result-emoji" id="resultEmoji">🎉</div>
+        </div>
+        <h2 id="resultTitle">Awesome Job!</h2>
+        <p class="result-subtitle" id="resultSubtitle">You finished the quiz!</p>
+        <div class="result-stats">
+          <div class="result-stat">
+            <span class="rs-value" id="resultCorrect">0</span>
+            <span class="rs-label">Correct</span>
+          </div>
+          <div class="result-stat">
+            <span class="rs-value" id="resultWrong">0</span>
+            <span class="rs-label">Wrong</span>
+          </div>
+          <div class="result-stat">
+            <span class="rs-value" id="resultStars">0</span>
+            <span class="rs-label">Stars</span>
+          </div>
+          <div class="result-stat">
+            <span class="rs-value" id="resultAccuracy">0%</span>
+            <span class="rs-label">Accuracy</span>
+          </div>
+        </div>
+        <div class="result-actions">
+          <button id="retryBtn" class="primary-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Try Again
+          </button>
+          <button id="homeBtn" class="ghost-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            Back Home
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Made with 💜 for little learners · Little Star GK</p>
+    </footer>
+  </section>
+
+  <!-- Confetti container -->
+  <div id="confettiContainer" class="confetti-container"></div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
