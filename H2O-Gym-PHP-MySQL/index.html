@@ -1,0 +1,4061 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-accent="emerald">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>H2O Singur Fitness Gym - Premium Gym Management System</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- App Stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- html2canvas: REQUIRED for ID card PDF + print rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- qrcodejs: renders ID card QR codes locally (no external service) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  </head>
+
+  <body>
+    <!-- ============================================================
+         LOGIN PAGE
+         ============================================================ -->
+    <div id="loginPage" class="login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <div class="login-logo">
+            <div class="login-logo-icon">
+              <i class="fas fa-dumbbell"></i>
+            </div>
+            <h1>H2O Singur Fitness Gym</h1>
+            <p>Premium Gym Management System</p>
+          </div>
+
+          <!-- Login Tabs -->
+          <div class="login-tabs">
+            <button
+              class="login-tab active"
+              data-login-tab="admin"
+              onclick="switchLoginTab('admin')"
+            >
+              <i class="fas fa-shield-halved"></i> Admin Login
+            </button>
+            <button
+              class="login-tab"
+              data-login-tab="staff"
+              onclick="switchLoginTab('staff')"
+            >
+              <i class="fas fa-user"></i> Staff Login
+            </button>
+          </div>
+
+          <!-- Admin Login Form -->
+          <form
+            id="adminLoginForm"
+            class="login-form active"
+            onsubmit="handleAdminLogin(event)"
+          >
+            <div id="adminLoginError" class="login-error">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Invalid credentials. Please try again.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Username <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                class="form-input"
+                id="adminUsername"
+                placeholder="Enter admin username"
+                required
+                autocomplete="username"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Password <span class="required">*</span></label
+              >
+              <input
+                type="password"
+                class="form-input"
+                id="adminPassword"
+                placeholder="Enter admin password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary btn-block btn-lg"
+              id="adminLoginBtn"
+            >
+              <i class="fas fa-sign-in-alt"></i> Sign In as Admin
+            </button>
+          </form>
+
+          <!-- Staff Login Form -->
+          <form
+            id="staffLoginForm"
+            class="login-form"
+            onsubmit="handleStaffLogin(event)"
+          >
+            <div id="staffLoginError" class="login-error">
+              <i class="fas fa-exclamation-circle"></i>
+              <span>Invalid credentials. Please try again.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Staff ID <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                class="form-input"
+                id="staffUsername"
+                placeholder="Enter staff ID"
+                required
+                autocomplete="username"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Password <span class="required">*</span></label
+              >
+              <input
+                type="password"
+                class="form-input"
+                id="staffPassword"
+                placeholder="Enter staff password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary btn-block btn-lg"
+              id="staffLoginBtn"
+            >
+              <i class="fas fa-sign-in-alt"></i> Sign In as Staff
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <p>
+              Secured by H2O Singur Fitness Gym v2.0 &mdash; Credentials
+              verified via cloud
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MAIN APP LAYOUT (hidden until login)
+         ============================================================ -->
+    <div id="appLayout" class="app-layout" style="display: none">
+      <!-- ====== SIDEBAR ====== -->
+      <aside id="sidebar" class="sidebar">
+        <button
+          class="sidebar-toggle"
+          onclick="toggleSidebar()"
+          aria-label="Toggle sidebar"
+        >
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <i class="fas fa-dumbbell"></i>
+          </div>
+          <span class="sidebar-brand-text">H2O Singur Fitness Gym</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button
+            class="sidebar-item active"
+            data-page="dashboard"
+            onclick="navigateTo('dashboard')"
+          >
+            <i class="sidebar-item-icon fas fa-chart-pie"></i>
+            <span class="sidebar-item-text">Dashboard</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="clients"
+            onclick="navigateTo('clients')"
+          >
+            <i class="sidebar-item-icon fas fa-users"></i>
+            <span class="sidebar-item-text">Clients</span>
+            <span class="sidebar-item-badge" id="clientCountBadge">0</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="registration"
+            onclick="navigateTo('registration')"
+          >
+            <i class="sidebar-item-icon fas fa-user-plus"></i>
+            <span class="sidebar-item-text">New Registration</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="selfregister"
+            onclick="navigateTo('selfregister')"
+          >
+            <i class="sidebar-item-icon fas fa-door-open"></i>
+            <span class="sidebar-item-text">Self-Register Portal</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="trainers"
+            onclick="navigateTo('trainers')"
+          >
+            <i class="sidebar-item-icon fas fa-user-tie"></i>
+            <span class="sidebar-item-text">Trainers</span>
+            <span
+              class="sidebar-item-badge"
+              id="trainerCountBadge"
+              style="background: var(--color-accent)"
+              >0</span
+            >
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="enquiry"
+            onclick="navigateTo('enquiry')"
+          >
+            <i class="sidebar-item-icon fas fa-clipboard-question"></i>
+            <span class="sidebar-item-text">Enquiries</span>
+            <span
+              class="sidebar-item-badge"
+              id="enquiryCountBadge"
+              style="background: var(--color-accent)"
+              >0</span
+            >
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="attendance"
+            onclick="navigateTo('attendance')"
+          >
+            <i class="sidebar-item-icon fas fa-clipboard-check"></i>
+            <span class="sidebar-item-text">Attendance</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="invoices"
+            onclick="navigateTo('invoices')"
+          >
+            <i class="sidebar-item-icon fas fa-file-invoice-dollar"></i>
+            <span class="sidebar-item-text">Invoices</span>
+            <span
+              class="sidebar-item-badge"
+              id="invoiceCountBadge"
+              style="background: var(--color-info)"
+              >0</span
+            >
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="idcards"
+            onclick="navigateTo('idcards')"
+          >
+            <i class="sidebar-item-icon fas fa-id-card"></i>
+            <span class="sidebar-item-text">ID Cards</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="dietplans"
+            onclick="navigateTo('dietplans')"
+          >
+            <i class="sidebar-item-icon fas fa-utensils"></i>
+            <span class="sidebar-item-text">Diet Plans</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="exerciseplans"
+            onclick="navigateTo('exerciseplans')"
+          >
+            <i class="sidebar-item-icon fas fa-dumbbell"></i>
+            <span class="sidebar-item-text">Exercise Plans</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="classes"
+            onclick="navigateTo('classes')"
+          >
+            <i class="sidebar-item-icon fas fa-people-group"></i>
+            <span class="sidebar-item-text">Group Classes</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="expenses"
+            onclick="navigateTo('expenses')"
+          >
+            <i class="sidebar-item-icon fas fa-money-bill-trend-up"></i>
+            <span class="sidebar-item-text">Expenses</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="reports"
+            onclick="navigateTo('reports')"
+          >
+            <i class="sidebar-item-icon fas fa-chart-line"></i>
+            <span class="sidebar-item-text">Reports</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="messages"
+            onclick="navigateTo('messages')"
+          >
+            <i class="sidebar-item-icon fas fa-message"></i>
+            <span class="sidebar-item-text">Templates</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="notifications"
+            onclick="navigateTo('notifications')"
+          >
+            <i class="sidebar-item-icon fas fa-bell"></i>
+            <span class="sidebar-item-text">Notifications</span>
+            <span class="sidebar-item-badge" id="notifCountBadge">0</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="backup"
+            onclick="navigateTo('backup')"
+          >
+            <i class="sidebar-item-icon fas fa-database"></i>
+            <span class="sidebar-item-text">Backup & Data</span>
+          </button>
+          <button
+            class="sidebar-item"
+            data-page="settings"
+            onclick="navigateTo('settings')"
+          >
+            <i class="sidebar-item-icon fas fa-gear"></i>
+            <span class="sidebar-item-text">Settings</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="sidebar-user" onclick="showLogoutConfirm()">
+            <div class="sidebar-user-avatar" id="sidebarUserAvatar">A</div>
+            <div class="sidebar-user-info">
+              <div class="sidebar-user-name" id="sidebarUserName">Admin</div>
+              <div class="sidebar-user-role" id="sidebarUserRole">
+                Administrator
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Sidebar overlay for mobile -->
+      <div
+        id="sidebarOverlay"
+        class="sidebar-overlay"
+        onclick="closeMobileSidebar()"
+      ></div>
+
+      <!-- ====== MAIN CONTENT AREA ====== -->
+      <div id="appMain" class="app-main">
+        <!-- ====== HEADER ====== -->
+        <header class="header">
+          <div class="header-left">
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-search">
+              <i class="header-search-icon fas fa-search"></i>
+              <input
+                type="text"
+                placeholder="Search clients, invoices..."
+                id="globalSearch"
+                oninput="handleGlobalSearch(this.value)"
+              />
+            </div>
+          </div>
+          <div class="header-right">
+            <button
+              class="header-action"
+              data-tooltip="Notifications"
+              onclick="toggleNotificationPanel()"
+            >
+              <i class="fas fa-bell"></i>
+              <span
+                class="badge-dot"
+                id="notifDot"
+                style="display: none"
+              ></span>
+            </button>
+            <button
+              class="header-action"
+              data-tooltip="Theme"
+              onclick="toggleThemePanel()"
+            >
+              <i class="fas fa-palette"></i>
+            </button>
+            <button
+              class="header-action"
+              data-tooltip="Fullscreen"
+              onclick="toggleFullscreen()"
+            >
+              <i class="fas fa-expand"></i>
+            </button>
+            <button
+              class="header-action"
+              data-tooltip="Logout"
+              onclick="showLogoutConfirm()"
+            >
+              <i class="fas fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </header>
+
+        <!-- ====== CONTENT PAGES ====== -->
+        <main class="app-content">
+          <!-- ===================== DASHBOARD PAGE ===================== -->
+          <section id="page-dashboard" class="page-content">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">
+                  Welcome back! Here's your gym overview.
+                </p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-primary"
+                  onclick="navigateTo('registration')"
+                >
+                  <i class="fas fa-plus"></i> New Member
+                </button>
+              </div>
+            </div>
+
+            <!-- Stats Row (clickable with filter redirect) -->
+            <div class="dashboard-stats stagger-children">
+              <div
+                class="stat-card animate-slideUp clickable-stat"
+                onclick="navigateToClientsWithFilter('all')"
+              >
+                <div class="stat-card-icon primary">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-card-value" id="statTotalMembers">0</div>
+                <div class="stat-card-label">Total Members</div>
+                <div class="stat-card-change positive">
+                  <i class="fas fa-arrow-up"></i> View All
+                </div>
+              </div>
+              <div
+                class="stat-card animate-slideUp clickable-stat"
+                onclick="navigateToClientsWithFilter('joinedThisMonth')"
+              >
+                <div class="stat-card-icon accent">
+                  <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="stat-card-value" id="statNewThisMonth">0</div>
+                <div class="stat-card-label">New This Month</div>
+                <div class="stat-card-change positive">
+                  <i class="fas fa-arrow-up"></i> View List
+                </div>
+              </div>
+              <div
+                class="stat-card animate-slideUp clickable-stat"
+                onclick="navigateToClientsWithFilter('renewal')"
+              >
+                <div class="stat-card-icon danger">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-card-value" id="statExpiringSoon">0</div>
+                <div class="stat-card-label">Expiring Soon</div>
+                <div class="stat-card-change negative">
+                  <i class="fas fa-exclamation"></i> View List
+                </div>
+              </div>
+              <div
+                class="stat-card animate-slideUp clickable-stat"
+                onclick="navigateToClientsWithFilter('birthday')"
+              >
+                <div class="stat-card-icon info">
+                  <i class="fas fa-cake-candles"></i>
+                </div>
+                <div class="stat-card-value" id="statBirthdaysThisWeek">0</div>
+                <div class="stat-card-label">Birthdays This Week</div>
+                <div class="stat-card-change positive">
+                  <i class="fas fa-gift"></i> View List
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="dashboard-grid">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Membership Trends</h3>
+                  <div class="btn-group">
+                    <button
+                      class="btn btn-sm btn-ghost chart-period active"
+                      data-period="6m"
+                      onclick="switchChartPeriod(this)"
+                    >
+                      6M
+                    </button>
+                    <button
+                      class="btn btn-sm btn-ghost chart-period"
+                      data-period="1y"
+                      onclick="switchChartPeriod(this)"
+                    >
+                      1Y
+                    </button>
+                    <button
+                      class="btn btn-sm btn-ghost chart-period"
+                      data-period="all"
+                      onclick="switchChartPeriod(this)"
+                    >
+                      All
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="membershipChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Plan Distribution</h3>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="planChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Activity & Upcoming -->
+            <div class="dashboard-grid">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Recent Registrations</h3>
+                  <button
+                    class="btn btn-sm btn-ghost"
+                    onclick="navigateTo('clients')"
+                  >
+                    View All
+                  </button>
+                </div>
+                <div class="card-body" id="recentMembersList">
+                  <div class="empty-state">
+                    <div class="empty-state-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <p class="text-muted">
+                      No members yet. Register your first client!
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Upcoming Events</h3>
+                </div>
+                <div class="card-body" id="upcomingEventsList">
+                  <div class="empty-state">
+                    <div class="empty-state-icon">
+                      <i class="fas fa-calendar"></i>
+                    </div>
+                    <p class="text-muted">No upcoming events.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions Grid -->
+            <div
+              class="grid-45"
+              style="margin-top: var(--space-5); gap: var(--space-4)"
+            >
+              <div
+                class="quick-action-card"
+                onclick="navigateTo('registration')"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(var(--color-primary-rgb), 0.15),
+                    rgba(var(--color-primary-rgb), 0.05)
+                  );
+                  border-color: rgba(var(--color-primary-rgb), 0.3);
+                "
+              >
+                <i
+                  class="fas fa-user-plus"
+                  style="color: var(--color-primary)"
+                ></i>
+                <span>New Member</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="navigateTo('attendance')"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(var(--color-info-rgb), 0.15),
+                    rgba(var(--color-info-rgb), 0.05)
+                  );
+                  border-color: rgba(var(--color-info-rgb), 0.3);
+                "
+              >
+                <i
+                  class="fas fa-clipboard-check"
+                  style="color: var(--color-info)"
+                ></i>
+                <span>Mark Attendance</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="navigateTo('invoices')"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(var(--color-accent-rgb), 0.15),
+                    rgba(var(--color-accent-rgb), 0.05)
+                  );
+                  border-color: rgba(var(--color-accent-rgb), 0.3);
+                "
+              >
+                <i
+                  class="fas fa-file-invoice-dollar"
+                  style="color: var(--color-accent)"
+                ></i>
+                <span>Create Invoice</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="openFestivalCampaignModal()"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(var(--color-danger-rgb), 0.15),
+                    rgba(var(--color-danger-rgb), 0.05)
+                  );
+                  border-color: rgba(var(--color-danger-rgb), 0.3);
+                "
+              >
+                <i
+                  class="fas fa-bullhorn"
+                  style="color: var(--color-danger)"
+                ></i>
+                <span>Festival Offer</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="navigateTo('idcards')"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(139, 92, 246, 0.15),
+                    rgba(139, 92, 246, 0.05)
+                  );
+                  border-color: rgba(139, 92, 246, 0.3);
+                "
+              >
+                <i class="fas fa-id-card" style="color: #8b5cf6"></i>
+                <span>Generate ID Card</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="downloadFullBackup()"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(20, 184, 166, 0.15),
+                    rgba(20, 184, 166, 0.05)
+                  );
+                  border-color: rgba(20, 184, 166, 0.3);
+                "
+              >
+                <i class="fas fa-database" style="color: #14b8a6"></i>
+                <span>Quick Backup</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="sendBulkRenewalReminders()"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(245, 158, 11, 0.15),
+                    rgba(245, 158, 11, 0.05)
+                  );
+                  border-color: rgba(245, 158, 11, 0.3);
+                "
+              >
+                <i class="fas fa-paper-plane" style="color: #f59e0b"></i>
+                <span>Send Renewals</span>
+              </div>
+              <div
+                class="quick-action-card"
+                onclick="navigateTo('expenses')"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    rgba(239, 68, 68, 0.15),
+                    rgba(239, 68, 68, 0.05)
+                  );
+                  border-color: rgba(239, 68, 68, 0.3);
+                "
+              >
+                <i
+                  class="fas fa-money-bill-trend-up"
+                  style="color: #ef4444"
+                ></i>
+                <span>Add Expense</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== CLIENTS LIST PAGE ===================== -->
+          <section id="page-clients" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Client Directory</h1>
+                <p class="page-subtitle">Manage all your gym members</p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-secondary"
+                  onclick="exportAllClients('json')"
+                >
+                  <i class="fas fa-code"></i> JSON
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="exportAllClients('excel')"
+                >
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="exportAllClients('pdf')"
+                >
+                  <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <button
+                  class="btn btn-primary"
+                  onclick="navigateTo('registration')"
+                >
+                  <i class="fas fa-plus"></i> Add Member
+                </button>
+              </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+              <span class="filter-label"
+                ><i class="fas fa-filter"></i> Filters:</span
+              >
+              <input
+                type="text"
+                class="form-input"
+                placeholder="Search by name, phone..."
+                id="clientSearchInput"
+                oninput="filterClients()"
+              />
+              <select
+                class="form-select"
+                id="filterStatus"
+                onchange="filterClients()"
+              >
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
+                <option value="expiring">Expiring Soon</option>
+              </select>
+              <select
+                class="form-select"
+                id="filterPlan"
+                onchange="filterClients()"
+              >
+                <option value="">All Plans</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Half-Yearly">Half-Yearly</option>
+                <option value="Annual">Annual</option>
+              </select>
+              <select
+                class="form-select"
+                id="filterGender"
+                onchange="filterClients()"
+              >
+                <option value="">All Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <select
+                class="form-select"
+                id="filterSpecial"
+                onchange="filterClients()"
+              >
+                <option value="">Special Filters</option>
+                <option value="birthday">Upcoming Birthday</option>
+                <option value="anniversary">Upcoming Anniversary</option>
+                <option value="renewal">Upcoming Renewal</option>
+                <option value="joinedThisMonth">Joined This Month</option>
+                <option value="expiredThisMonth">Expired This Month</option>
+              </select>
+              <button
+                class="btn btn-sm btn-ghost"
+                onclick="clearClientFilters()"
+              >
+                <i class="fas fa-times"></i> Clear
+              </button>
+            </div>
+
+            <!-- Active filter chips -->
+            <div
+              id="activeFilterChips"
+              class="flex gap-2"
+              style="margin-bottom: 16px; flex-wrap: wrap"
+            ></div>
+
+            <!-- Client Table -->
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        id="selectAllClients"
+                        onchange="toggleSelectAllClients(this)"
+                      />
+                    </th>
+                    <th>Member</th>
+                    <th>Contact</th>
+                    <th>Plan</th>
+                    <th>Join Date</th>
+                    <th>Renewal</th>
+                    <th>Status</th>
+                    <th>Quick Actions</th>
+                    <th style="display: none">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="clientTableBody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+              <div class="table-pagination">
+                <div class="table-pagination-info" id="paginationInfo">
+                  Showing 0 of 0 members
+                </div>
+                <div
+                  class="table-pagination-controls"
+                  id="paginationControls"
+                ></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== CLIENT REGISTRATION PAGE ===================== -->
+          <section
+            id="page-registration"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title" id="registrationPageTitle">
+                  New Member Registration
+                </h1>
+                <p class="page-subtitle">
+                  Fill in the details to register a new gym member
+                </p>
+              </div>
+            </div>
+
+            <form
+              id="registrationForm"
+              class="enquiry-form"
+              onsubmit="handleClientRegistration(event)"
+            >
+              <!-- Personal Information -->
+              <div class="card" style="margin-bottom: var(--space-5)">
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <i class="fas fa-user"></i> Personal Information
+                  </div>
+                  <div
+                    class="flex gap-6 items-start"
+                    style="margin-bottom: var(--space-4)"
+                  >
+                    <div
+                      class="image-upload"
+                      id="profileImageUpload"
+                      onclick="
+                        document.getElementById('profileImageInput').click()
+                      "
+                    >
+                      <div
+                        class="image-upload-placeholder"
+                        id="imagePlaceholder"
+                      >
+                        <i class="fas fa-camera"></i>
+                        <span>Upload Photo</span>
+                      </div>
+                      <input
+                        type="file"
+                        class="file-input-hidden"
+                        id="profileImageInput"
+                        accept="image/*"
+                        onchange="handleImageUpload(this)"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label class="form-label"
+                            >First Name <span class="required">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-input"
+                            id="regFirstName"
+                            placeholder="First name"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Last Name <span class="required">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-input"
+                            id="regLastName"
+                            placeholder="Last name"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="form-row-3">
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Date of Birth
+                            <span class="required">*</span></label
+                          >
+                          <input
+                            type="date"
+                            class="form-input"
+                            id="regDOB"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Anniversary Date
+                            <span class="optional">(optional)</span></label
+                          >
+                          <input
+                            type="date"
+                            class="form-input"
+                            id="regAnniversary"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Gender <span class="required">*</span></label
+                          >
+                          <select class="form-select" id="regGender" required>
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Blood Group
+                        <span class="optional">(optional)</span></label
+                      >
+                      <select class="form-select" id="regBloodGroup">
+                        <option value="">Select</option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                        <option>O+</option>
+                        <option>O-</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Aadhaar Number <span class="required">*</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regAadhaar"
+                        placeholder="XXXX XXXX XXXX"
+                        maxlength="14"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Occupation
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regOccupation"
+                        placeholder="Occupation"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="card" style="margin-bottom: var(--space-5)">
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <i class="fas fa-phone"></i> Contact Information
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Mobile Number <span class="required">*</span></label
+                      >
+                      <input
+                        type="tel"
+                        class="form-input"
+                        id="regMobile"
+                        placeholder="+91 XXXXX XXXXX"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >WhatsApp Number
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="tel"
+                        class="form-input"
+                        id="regWhatsApp"
+                        placeholder="Same as mobile if blank"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Email Address
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="email"
+                        class="form-input"
+                        id="regEmail"
+                        placeholder="email@example.com"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Address <span class="optional">(optional)</span></label
+                    >
+                    <textarea
+                      class="form-textarea"
+                      id="regAddress"
+                      placeholder="Full address"
+                      rows="2"
+                    ></textarea>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >City <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regCity"
+                        placeholder="City"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >State <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regState"
+                        placeholder="State"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Pincode <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regPincode"
+                        placeholder="Pincode"
+                        maxlength="6"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Emergency Contact Name
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regEmergencyName"
+                        placeholder="Contact person name"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Emergency Contact Number
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="tel"
+                        class="form-input"
+                        id="regEmergencyPhone"
+                        placeholder="Contact number"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fitness Information -->
+              <div class="card" style="margin-bottom: var(--space-5)">
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <i class="fas fa-heartbeat"></i> Fitness Information
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Fitness Goal <span class="required">*</span></label
+                      >
+                      <select class="form-select" id="regGoal" required>
+                        <option value="">Select Goal</option>
+                        <option value="Weight Loss">Weight Loss</option>
+                        <option value="Muscle Gain">Muscle Gain</option>
+                        <option value="Flexibility">Flexibility</option>
+                        <option value="General Fitness">General Fitness</option>
+                        <option value="Body Recomposition">
+                          Body Recomposition
+                        </option>
+                        <option value="Sports Specific">Sports Specific</option>
+                        <option value="Rehabilitation">Rehabilitation</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Weight (kg)
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="regWeight"
+                        placeholder="e.g. 75"
+                        min="20"
+                        max="300"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Height (cm)
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="regHeight"
+                        placeholder="e.g. 175"
+                        min="100"
+                        max="250"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Any Disease
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regDisease"
+                        placeholder="e.g. Diabetes, BP"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Previous Surgery
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regSurgery"
+                        placeholder="Surgery details if any"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Current Medications
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="regMedications"
+                        placeholder="Ongoing medications"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Membership Information -->
+              <div class="card" style="margin-bottom: var(--space-5)">
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <i class="fas fa-id-card"></i> Membership Information
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Membership Plan <span class="required">*</span></label
+                      >
+                      <select
+                        class="form-select"
+                        id="regPlan"
+                        required
+                        onchange="updatePlanDates()"
+                      >
+                        <option value="">Select Plan</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half-Yearly">Half-Yearly</option>
+                        <option value="Annual">Annual</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Joining Date <span class="required">*</span></label
+                      >
+                      <input
+                        type="date"
+                        class="form-input"
+                        id="regJoinDate"
+                        required
+                        onchange="updatePlanDates()"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Renewal/Expiry Date</label>
+                      <input
+                        type="date"
+                        class="form-input"
+                        id="regRenewalDate"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Total Fees <span class="required">*</span></label
+                      >
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="regFees"
+                        placeholder="Total amount"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Discount
+                        <span class="optional">(optional)</span></label
+                      >
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="regDiscount"
+                        placeholder="Discount amount"
+                        min="0"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Payment Mode <span class="required">*</span></label
+                      >
+                      <select class="form-select" id="regPaymentMode" required>
+                        <option value="">Select</option>
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cheque">Cheque</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Notes <span class="optional">(optional)</span></label
+                    >
+                    <textarea
+                      class="form-textarea"
+                      id="regNotes"
+                      placeholder="Any additional notes about the member..."
+                      rows="3"
+                    ></textarea>
+                  </div>
+                  <!-- Hidden edit ID -->
+                  <input type="hidden" id="regEditId" value="" />
+                </div>
+              </div>
+
+              <div class="flex justify-end gap-3">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  onclick="resetRegistrationForm()"
+                >
+                  <i class="fas fa-undo"></i> Reset
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  id="regSubmitBtn"
+                >
+                  <i class="fas fa-check"></i> Register Member
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===================== ENQUIRY FORM PAGE ===================== -->
+          <section id="page-enquiry" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Gym Enquiry / Appointment</h1>
+                <p class="page-subtitle">Walk-in or online enquiry booking</p>
+              </div>
+            </div>
+
+            <div class="card" style="max-width: 800px">
+              <form id="enquiryForm" onsubmit="handleEnquirySubmit(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Full Name <span class="required">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-input"
+                      id="enqName"
+                      placeholder="Enquirer's name"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Phone Number <span class="required">*</span></label
+                    >
+                    <input
+                      type="tel"
+                      class="form-input"
+                      id="enqPhone"
+                      placeholder="Contact number"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Email <span class="optional">(optional)</span></label
+                    >
+                    <input
+                      type="email"
+                      class="form-input"
+                      id="enqEmail"
+                      placeholder="Email address"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Preferred Date <span class="required">*</span></label
+                    >
+                    <input
+                      type="date"
+                      class="form-input"
+                      id="enqDate"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Preferred Time
+                      <span class="optional">(optional)</span></label
+                    >
+                    <input type="time" class="form-input" id="enqTime" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label"
+                      >Interested In <span class="required">*</span></label
+                    >
+                    <select class="form-select" id="enqInterest" required>
+                      <option value="">Select</option>
+                      <option value="General Gym">General Gym</option>
+                      <option value="Personal Training">
+                        Personal Training
+                      </option>
+                      <option value="Yoga">Yoga</option>
+                      <option value="Zumba">Zumba</option>
+                      <option value="CrossFit">CrossFit</option>
+                      <option value="Diet Consultation">
+                        Diet Consultation
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label"
+                    >Message <span class="optional">(optional)</span></label
+                  >
+                  <textarea
+                    class="form-textarea"
+                    id="enqMessage"
+                    placeholder="Any specific requirements..."
+                    rows="3"
+                  ></textarea>
+                </div>
+                <div class="flex justify-end gap-3">
+                  <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Clear
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Submit Enquiry
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Enquiry List -->
+            <div class="card" style="margin-top: var(--space-5)">
+              <div class="card-header">
+                <h3 class="card-title">Recent Enquiries</h3>
+                <button
+                  class="btn btn-sm btn-secondary"
+                  onclick="exportEnquiries('excel')"
+                >
+                  <i class="fas fa-file-excel"></i> Export
+                </button>
+              </div>
+              <div
+                class="table-container"
+                style="border: none; box-shadow: none"
+              >
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Date</th>
+                      <th>Interest</th>
+                      <th>Status</th>
+                      <th>Contact</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="enquiryTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== INVOICES PAGE ===================== -->
+          <section
+            id="page-invoices"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Invoice Generation</h1>
+                <p class="page-subtitle">Create and manage invoices</p>
+              </div>
+            </div>
+
+            <div
+              class="grid-2"
+              style="gap: var(--space-5); margin-bottom: var(--space-5)"
+            >
+              <div class="card">
+                <h3 style="margin-bottom: var(--space-4)">Create Invoice</h3>
+                <div class="form-row">
+                  <div class="form-group" style="flex: 2">
+                    <label class="form-label">Select Client</label>
+                    <select
+                      class="form-select"
+                      id="invoiceClient"
+                      onchange="onInvoiceClientChange()"
+                    >
+                      <option value="">Choose client...</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Invoice Date</label>
+                    <input type="date" class="form-input" id="invoiceDate" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Membership Plan</label>
+                    <select
+                      class="form-select"
+                      id="invoicePlan"
+                      onchange="onInvoicePlanChange()"
+                    >
+                      <option value="">Select Plan (Optional)</option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Quarterly">Quarterly</option>
+                      <option value="Half-Yearly">Half-Yearly</option>
+                      <option value="Annual">Annual</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Invoice Color</label>
+                    <div class="invoice-color-options flex gap-2 items-center">
+                      <div
+                        class="invoice-color-option active"
+                        style="background: #10b981"
+                        data-color="#10b981"
+                        onclick="selectInvoiceColor(this)"
+                      ></div>
+                      <div
+                        class="invoice-color-option"
+                        style="background: #3b82f6"
+                        data-color="#3b82f6"
+                        onclick="selectInvoiceColor(this)"
+                      ></div>
+                      <div
+                        class="invoice-color-option"
+                        style="background: #8b5cf6"
+                        data-color="#8b5cf6"
+                        onclick="selectInvoiceColor(this)"
+                      ></div>
+                      <div
+                        class="invoice-color-option"
+                        style="background: #ef4444"
+                        data-color="#ef4444"
+                        onclick="selectInvoiceColor(this)"
+                      ></div>
+                      <div
+                        class="invoice-color-option"
+                        style="background: #f59e0b"
+                        data-color="#f59e0b"
+                        onclick="selectInvoiceColor(this)"
+                      ></div>
+                      <input
+                        type="color"
+                        id="invoiceCustomColor"
+                        value="#10b981"
+                        style="
+                          width: 36px;
+                          height: 36px;
+                          border: none;
+                          cursor: pointer;
+                          border-radius: 50%;
+                        "
+                        onchange="selectCustomInvoiceColor(this.value)"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <h4 style="margin: var(--space-4) 0 var(--space-2)">
+                  Invoice Items
+                </h4>
+                <div id="invoiceItemsContainer">
+                  <div
+                    class="form-row invoice-item-row"
+                    style="margin-bottom: 8px"
+                  >
+                    <input
+                      type="text"
+                      class="form-input"
+                      placeholder="Description"
+                      style="flex: 2"
+                    />
+                    <input
+                      type="number"
+                      class="form-input"
+                      placeholder="Amount"
+                      style="flex: 1"
+                    />
+                  </div>
+                </div>
+                <button
+                  class="btn btn-sm btn-ghost"
+                  onclick="addInvoiceItemRow()"
+                  style="margin-bottom: var(--space-4)"
+                >
+                  <i class="fas fa-plus"></i> Add Item
+                </button>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Discount (₹)</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="invoiceDiscount"
+                      value="0"
+                      min="0"
+                      oninput="updateInvoicePreview()"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Tax (%)</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="invoiceTax"
+                      value="18"
+                      min="0"
+                      oninput="updateInvoicePreview()"
+                    />
+                  </div>
+                </div>
+
+                <div class="flex gap-3">
+                  <button class="btn btn-primary" onclick="generateInvoice()">
+                    <i class="fas fa-file-invoice"></i> Generate Invoice
+                  </button>
+                  <button class="btn btn-secondary" onclick="previewInvoice()">
+                    <i class="fas fa-eye"></i> Preview
+                  </button>
+                  <button class="btn btn-ghost" onclick="resetInvoiceForm()">
+                    <i class="fas fa-broom"></i> Clear
+                  </button>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 style="margin-bottom: var(--space-4)">Recent Invoices</h3>
+                <div id="invoicesListContainer">
+                  <div class="empty-state" style="padding: var(--space-8)">
+                    <div class="empty-state-icon">
+                      <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <p class="text-muted">No invoices generated yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== MESSAGES/TEMPLATES PAGE ===================== -->
+          <section
+            id="page-messages"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Message Templates</h1>
+                <p class="page-subtitle">One-click WhatsApp & Email messages</p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-primary"
+                  onclick="openAddTemplateModal()"
+                >
+                  <i class="fas fa-plus"></i> New Template
+                </button>
+              </div>
+            </div>
+            <div class="grid-3" id="templateGrid">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <!-- ===================== NOTIFICATIONS PAGE ===================== -->
+          <section
+            id="page-notifications"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Notifications Center</h1>
+                <p class="page-subtitle">
+                  Birthday, Anniversary & Renewal Reminders
+                </p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-secondary"
+                  onclick="markAllNotificationsRead()"
+                >
+                  <i class="fas fa-check-double"></i> Mark All Read
+                </button>
+              </div>
+            </div>
+            <div id="notificationFullList">
+              <!-- Populated by JS -->
+            </div>
+          </section>
+
+          <!-- ===================== BACKUP & DATA PAGE ===================== -->
+          <section id="page-backup" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Backup & Data Management</h1>
+                <p class="page-subtitle">
+                  Export, import, and manage your data
+                </p>
+              </div>
+            </div>
+            <div
+              class="grid-3"
+              style="gap: var(--space-5); margin-bottom: var(--space-5)"
+            >
+              <div class="backup-card">
+                <i class="fas fa-cloud-arrow-down"></i>
+                <h4>Manual Backup</h4>
+                <p>Download complete system data as JSON</p>
+                <button class="btn btn-primary" onclick="downloadFullBackup()">
+                  <i class="fas fa-download"></i> Download Backup
+                </button>
+              </div>
+              <div class="backup-card">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <h4>Restore Data</h4>
+                <p>Import data from a backup file</p>
+                <button
+                  class="btn btn-secondary"
+                  onclick="document.getElementById('importBackupInput').click()"
+                >
+                  <i class="fas fa-upload"></i> Restore Backup
+                </button>
+                <input
+                  type="file"
+                  id="importBackupInput"
+                  class="file-input-hidden"
+                  accept=".json"
+                  onchange="restoreBackup(this)"
+                />
+              </div>
+              <div class="backup-card">
+                <i class="fas fa-clock-rotate-left"></i>
+                <h4>Auto-Backup Status</h4>
+                <p id="autoBackupStatus">Last backup: Never</p>
+                <button class="btn btn-ghost" onclick="triggerAutoBackup()">
+                  <i class="fas fa-sync"></i> Trigger Now
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Backup History</h3>
+              </div>
+              <div id="backupHistoryList" class="card-body">
+                <div class="empty-state" style="padding: var(--space-6)">
+                  <p class="text-muted">No backups yet.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== SETTINGS PAGE ===================== -->
+          <section
+            id="page-settings"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Settings</h1>
+                <p class="page-subtitle">Configure system preferences</p>
+              </div>
+            </div>
+
+            <div class="settings-layout">
+              <nav class="settings-nav">
+                <button
+                  class="settings-nav-item active"
+                  onclick="switchSettingsTab('general', this)"
+                >
+                  <i class="fas fa-cog"></i> General
+                </button>
+                <button
+                  class="settings-nav-item"
+                  onclick="switchSettingsTab('fields', this)"
+                >
+                  <i class="fas fa-list-check"></i> Form Fields
+                </button>
+                <button
+                  class="settings-nav-item"
+                  onclick="switchSettingsTab('gym', this)"
+                >
+                  <i class="fas fa-building"></i> Gym Profile
+                </button>
+                <button
+                  class="settings-nav-item"
+                  onclick="switchSettingsTab('appearance', this)"
+                >
+                  <i class="fas fa-palette"></i> Appearance
+                </button>
+                <button
+                  class="settings-nav-item"
+                  onclick="switchSettingsTab('users', this)"
+                >
+                  <i class="fas fa-users-gear"></i> Users & Security
+                </button>
+              </nav>
+
+              <div class="settings-content">
+                <!-- General Settings -->
+                <div id="settingsTab-general" class="settings-tab-content">
+                  <div class="settings-section">
+                    <h3>Auto-Backup</h3>
+                    <p>Automatically backup data every day</p>
+                    <div class="settings-row">
+                      <div>
+                        <div class="settings-row-label">Daily Auto-Backup</div>
+                        <div class="settings-row-desc">
+                          Saves a copy to browser storage and makes it available
+                          for download
+                        </div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input
+                          type="checkbox"
+                          id="settingAutoBackup"
+                          checked
+                          onchange="saveSetting('autoBackup', this.checked)"
+                        />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Form Field Settings (Mandatory/Optional Toggle) -->
+                <div
+                  id="settingsTab-fields"
+                  class="settings-tab-content"
+                  style="display: none"
+                >
+                  <div class="settings-section">
+                    <h3>Registration Form Fields</h3>
+                    <p>Toggle fields between Required, Optional, or Hidden</p>
+                    <div id="fieldSettingsContainer">
+                      <!-- Populated by JS dynamically based on APP_CONFIG -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Gym Profile Settings -->
+                <div
+                  id="settingsTab-gym"
+                  class="settings-tab-content"
+                  style="display: none"
+                >
+                  <div class="settings-section">
+                    <h3>Gym Business Profile</h3>
+                    <p>Details used on invoices and messages</p>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Gym Name</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="settingGymName"
+                          placeholder="Your Gym Name"
+                          onchange="saveSetting('gymName', this.value)"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Gym Phone</label>
+                        <input
+                          type="tel"
+                          class="form-input"
+                          id="settingGymPhone"
+                          placeholder="Contact number"
+                          onchange="saveSetting('gymPhone', this.value)"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Gym Address</label>
+                      <textarea
+                        class="form-textarea"
+                        id="settingGymAddress"
+                        placeholder="Full address"
+                        rows="2"
+                        onchange="saveSetting('gymAddress', this.value)"
+                      ></textarea>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">GST Number</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="settingGstNumber"
+                          placeholder="GSTIN"
+                          onchange="saveSetting('gstNumber', this.value)"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Currency Symbol</label>
+                        <input
+                          type="text"
+                          class="form-input"
+                          id="settingCurrency"
+                          placeholder="₹"
+                          maxlength="3"
+                          onchange="saveSetting('currency', this.value)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Users & Security (MySQL users table) -->
+                <div
+                  id="settingsTab-users"
+                  class="settings-tab-content"
+                  style="display: none"
+                >
+                  <div class="settings-section">
+                    <h3>User Management</h3>
+                    <p>
+                      Login accounts stored in the MySQL <code>users</code> table
+                      (same table the login screen verifies against). Passwords are
+                      stored as bcrypt hashes.
+                    </p>
+                    <div id="userManagementContainer">
+                      <p class="text-muted">Loading…</p>
+                    </div>
+                  </div>
+                  <div class="settings-section">
+                    <h3>Change My Password</h3>
+                    <p>Update the password of the currently logged-in account</p>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input
+                          type="password"
+                          class="form-input"
+                          id="myCurrentPassword"
+                          autocomplete="current-password"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input
+                          type="password"
+                          class="form-input"
+                          id="myNewPassword"
+                          autocomplete="new-password"
+                          placeholder="min 6 characters"
+                        />
+                      </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="changeMyPassword()">
+                      <i class="fas fa-key"></i> Update Password
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Appearance Settings -->
+                <div
+                  id="settingsTab-appearance"
+                  class="settings-tab-content"
+                  style="display: none"
+                >
+                  <div class="settings-section">
+                    <h3>Theme & Colors</h3>
+                    <p>Customize the look and feel of your system</p>
+                    <div class="settings-row">
+                      <div>
+                        <div class="settings-row-label">Dark Mode</div>
+                        <div class="settings-row-desc">
+                          Toggle between light and dark theme
+                        </div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input
+                          type="checkbox"
+                          id="settingDarkMode"
+                          checked
+                          onchange="toggleThemeMode(this.checked)"
+                        />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div style="margin-top: var(--space-5)">
+                      <label class="form-label">Accent Color</label>
+                      <div
+                        class="theme-color-grid"
+                        style="margin-top: var(--space-2)"
+                      >
+                        <div
+                          class="theme-color-swatch active"
+                          style="background: #10b981"
+                          data-accent="emerald"
+                          onclick="setAccentColor('emerald', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #ef4444"
+                          data-accent="crimson"
+                          onclick="setAccentColor('crimson', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #f59e0b"
+                          data-accent="amber"
+                          onclick="setAccentColor('amber', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #06b6d4"
+                          data-accent="ocean"
+                          onclick="setAccentColor('ocean', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #8b5cf6"
+                          data-accent="violet"
+                          onclick="setAccentColor('violet', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #f43f5e"
+                          data-accent="rose"
+                          onclick="setAccentColor('rose', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #14b8a6"
+                          data-accent="teal"
+                          onclick="setAccentColor('teal', this)"
+                        ></div>
+                        <div
+                          class="theme-color-swatch"
+                          style="background: #84cc16"
+                          data-accent="lime"
+                          onclick="setAccentColor('lime', this)"
+                        ></div>
+                      </div>
+                      <div style="margin-top: var(--space-4)">
+                        <label class="form-label">Custom Accent Color</label>
+                        <div class="color-picker-wrapper">
+                          <input
+                            type="color"
+                            class="color-picker-input"
+                            id="customAccentPicker"
+                            value="#10b981"
+                            onchange="setCustomAccentColor(this.value)"
+                          />
+                          <input
+                            type="text"
+                            class="color-picker-hex"
+                            id="customAccentHex"
+                            value="#10b981"
+                            placeholder="#hex"
+                            onchange="setCustomAccentColor(this.value)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== TRAINERS PAGE ===================== -->
+          <section
+            id="page-trainers"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Trainer Management</h1>
+                <p class="page-subtitle">Register and manage gym trainers</p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-secondary"
+                  onclick="exportAllTrainers('excel')"
+                >
+                  <i class="fas fa-file-excel"></i> Excel
+                </button>
+                <button
+                  class="btn btn-primary"
+                  onclick="navigateTo('trainerRegistration')"
+                >
+                  <i class="fas fa-plus"></i> New Trainer
+                </button>
+              </div>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Trainer</th>
+                    <th>Contact</th>
+                    <th>Specialization</th>
+                    <th>Experience</th>
+                    <th>Assigned Clients</th>
+                    <th>Rating</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="trainerTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===================== TRAINER REGISTRATION PAGE ===================== -->
+          <section
+            id="page-trainerRegistration"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title" id="trainerRegTitle">
+                  New Trainer Registration
+                </h1>
+                <p class="page-subtitle">Fill in trainer details</p>
+              </div>
+            </div>
+            <form
+              id="trainerForm"
+              class="enquiry-form"
+              onsubmit="handleTrainerRegistration(event)"
+            >
+              <div class="card" style="margin-bottom: var(--space-5)">
+                <div class="form-section">
+                  <div class="form-section-title">
+                    <i class="fas fa-user-tie"></i> Trainer Information
+                  </div>
+                  <div class="flex gap-6 items-start">
+                    <div
+                      class="image-upload"
+                      id="trainerImageUpload"
+                      onclick="
+                        document.getElementById('trainerImageInput').click()
+                      "
+                    >
+                      <div
+                        class="image-upload-placeholder"
+                        id="trainerImagePlaceholder"
+                      >
+                        <i class="fas fa-camera"></i><span>Upload Photo</span>
+                      </div>
+                      <input
+                        type="file"
+                        class="file-input-hidden"
+                        id="trainerImageInput"
+                        accept="image/*"
+                        onchange="handleTrainerImageUpload(this)"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label class="form-label"
+                            >First Name <span class="required">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-input"
+                            id="trnFirstName"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Last Name <span class="required">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-input"
+                            id="trnLastName"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="form-row-3">
+                        <div class="form-group">
+                          <label class="form-label"
+                            >Mobile <span class="required">*</span></label
+                          >
+                          <input
+                            type="tel"
+                            class="form-input"
+                            id="trnMobile"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Email</label>
+                          <input
+                            type="email"
+                            class="form-input"
+                            id="trnEmail"
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Date of Birth</label>
+                          <input type="date" class="form-input" id="trnDOB" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label"
+                        >Specialization <span class="required">*</span></label
+                      >
+                      <select
+                        class="form-select"
+                        id="trnSpecialization"
+                        required
+                      >
+                        <option value="">Select</option>
+                        <option value="Strength Training">
+                          Strength Training
+                        </option>
+                        <option value="Cardio">Cardio</option>
+                        <option value="Yoga">Yoga</option>
+                        <option value="Pilates">Pilates</option>
+                        <option value="CrossFit">CrossFit</option>
+                        <option value="Powerlifting">Powerlifting</option>
+                        <option value="Bodybuilding">Bodybuilding</option>
+                        <option value="Rehabilitation">Rehabilitation</option>
+                        <option value="Nutrition">Nutrition</option>
+                        <option value="Sports Specific">Sports Specific</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Experience (years)</label>
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="trnExperience"
+                        min="0"
+                        max="50"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Certifications</label>
+                      <input
+                        type="text"
+                        class="form-input"
+                        id="trnCertifications"
+                        placeholder="ACE, NASM, etc."
+                      />
+                    </div>
+                  </div>
+                  <div class="form-row-3">
+                    <div class="form-group">
+                      <label class="form-label">Shift Start</label>
+                      <input
+                        type="time"
+                        class="form-input"
+                        id="trnShiftStart"
+                        value="06:00"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Shift End</label>
+                      <input
+                        type="time"
+                        class="form-input"
+                        id="trnShiftEnd"
+                        value="12:00"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Monthly Salary</label>
+                      <input
+                        type="number"
+                        class="form-input"
+                        id="trnSalary"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  <input type="hidden" id="trnEditId" value="" />
+                  <div class="flex justify-end gap-3">
+                    <button type="reset" class="btn btn-secondary">
+                      <i class="fas fa-undo"></i> Reset
+                    </button>
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      id="trnSubmitBtn"
+                    >
+                      <i class="fas fa-check"></i> Register Trainer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <!-- ===================== ATTENDANCE PAGE ===================== -->
+          <section
+            id="page-attendance"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Attendance Tracker</h1>
+                <p class="page-subtitle">Mark and track member check-ins</p>
+              </div>
+              <div class="page-header-actions">
+                <button class="btn btn-primary" onclick="markAllPresentToday()">
+                  <i class="fas fa-check-double"></i> Mark All Present
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="generateDailyQRCode()"
+                >
+                  <i class="fas fa-qrcode"></i> Daily QR Code
+                </button>
+              </div>
+            </div>
+            <div class="filter-bar">
+              <span class="filter-label"
+                ><i class="fas fa-filter"></i> Filters:</span
+              >
+              <input
+                type="date"
+                class="form-input"
+                id="attendanceDateFilter"
+                onchange="renderAttendanceTable()"
+              />
+              <select
+                class="form-select"
+                id="attendancePlanFilter"
+                onchange="renderAttendanceTable()"
+              >
+                <option value="">All Plans</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Quarterly">Quarterly</option>
+                <option value="Half-Yearly">Half-Yearly</option>
+                <option value="Annual">Annual</option>
+              </select>
+              <select
+                class="form-select"
+                id="attendanceStatusFilter"
+                onchange="renderAttendanceTable()"
+              >
+                <option value="">All Status</option>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+                <option value="unmarked">Unmarked</option>
+              </select>
+              <button
+                class="btn btn-sm btn-ghost"
+                onclick="exportAttendanceReport()"
+              >
+                <i class="fas fa-file-excel"></i> Export
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <input
+                        type="checkbox"
+                        id="selectAllAttendance"
+                        onchange="toggleSelectAllAttendance(this)"
+                      />
+                    </th>
+                    <th>Member</th>
+                    <th>Plan</th>
+                    <th>Status</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTableBody"></tbody>
+              </table>
+            </div>
+            <div class="dashboard-grid" style="margin-top: var(--space-5)">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Weekly Attendance Trend</h3>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Peak Hours Heatmap</h3>
+                </div>
+                <div class="card-body"><div id="peakHoursHeatmap"></div></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== ID CARDS PAGE ===================== -->
+          <section id="page-idcards" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">ID Card Generation</h1>
+                <p class="page-subtitle">Generate printable member ID cards</p>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom: var(--space-5)">
+              <div class="form-row-3">
+                <div class="form-group">
+                  <label class="form-label">Select Member</label>
+                  <select
+                    class="form-select"
+                    id="idcardClientSelect"
+                    onchange="renderIDCardPreview()"
+                  ></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Card Template</label>
+                  <select
+                    class="form-select"
+                    id="idcardTemplateSelect"
+                    onchange="renderIDCardPreview()"
+                  >
+                    <option value="classic">Classic</option>
+                    <option value="modern">Modern</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="vip">VIP Premium</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Accent Color</label>
+                  <input
+                    type="color"
+                    class="color-picker-input"
+                    id="idcardColor"
+                    value="#10b981"
+                    onchange="renderIDCardPreview()"
+                    style="width: 100%; height: 44px"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="card" style="text-align: center; background: #e5e7eb">
+              <div id="idcardPreviewContainer"></div>
+            </div>
+            <div
+              class="flex justify-center gap-3"
+              style="margin-top: var(--space-5)"
+            >
+              <button class="btn btn-primary" onclick="downloadIDCardPDF()">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button class="btn btn-secondary" onclick="printIDCard()">
+                <i class="fas fa-print"></i> Print
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="batchGenerateIDCards()"
+              >
+                <i class="fas fa-layer-group"></i> Batch Generate All
+              </button>
+            </div>
+          </section>
+
+          <!-- ===================== DIET PLANS PAGE ===================== -->
+          <section
+            id="page-dietplans"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Diet Plans</h1>
+                <p class="page-subtitle">
+                  Create & assign diet plans to members
+                </p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-primary"
+                  onclick="openAddDietPlanModal()"
+                >
+                  <i class="fas fa-plus"></i> New Diet Plan
+                </button>
+              </div>
+            </div>
+            <div class="grid-3" id="dietPlanGrid"></div>
+          </section>
+
+          <!-- ===================== EXERCISE PLANS PAGE ===================== -->
+          <section
+            id="page-exerciseplans"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Exercise Plans</h1>
+                <p class="page-subtitle">
+                  Create & assign workout plans to members
+                </p>
+              </div>
+              <div class="page-header-actions">
+                <button
+                  class="btn btn-primary"
+                  onclick="openAddExercisePlanModal()"
+                >
+                  <i class="fas fa-plus"></i> New Exercise Plan
+                </button>
+              </div>
+            </div>
+            <div class="grid-3" id="exercisePlanGrid"></div>
+          </section>
+
+          <!-- ===================== GROUP CLASSES PAGE ===================== -->
+          <section id="page-classes" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Group Classes</h1>
+                <p class="page-subtitle">
+                  Schedule and manage group workout sessions
+                </p>
+              </div>
+              <div class="page-header-actions">
+                <button class="btn btn-primary" onclick="openAddClassModal()">
+                  <i class="fas fa-plus"></i> Schedule Class
+                </button>
+              </div>
+            </div>
+            <div class="grid-3" id="classesGrid"></div>
+          </section>
+
+          <!-- ===================== EXPENSES PAGE ===================== -->
+          <section
+            id="page-expenses"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Expense Tracker</h1>
+                <p class="page-subtitle">Track gym operational expenses</p>
+              </div>
+              <div class="page-header-actions">
+                <button class="btn btn-primary" onclick="openAddExpenseModal()">
+                  <i class="fas fa-plus"></i> Add Expense
+                </button>
+              </div>
+            </div>
+            <div class="dashboard-stats stagger-children">
+              <div class="stat-card animate-slideUp">
+                <div class="stat-card-icon primary">
+                  <i class="fas fa-wallet"></i>
+                </div>
+                <div class="stat-card-value" id="statTotalExpenses">₹0</div>
+                <div class="stat-card-label">Total Expenses</div>
+              </div>
+              <div class="stat-card animate-slideUp">
+                <div class="stat-card-icon accent">
+                  <i class="fas fa-calendar-month"></i>
+                </div>
+                <div class="stat-card-value" id="statExpenseThisMonth">₹0</div>
+                <div class="stat-card-label">This Month</div>
+              </div>
+              <div class="stat-card animate-slideUp">
+                <div class="stat-card-icon info">
+                  <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-card-value" id="statAvgMonthly">₹0</div>
+                <div class="stat-card-label">Avg/Month</div>
+              </div>
+              <div class="stat-card animate-slideUp">
+                <div class="stat-card-icon danger">
+                  <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-card-value" id="statExpenseRatio">0%</div>
+                <div class="stat-card-label">Exp/Rev Ratio</div>
+              </div>
+            </div>
+            <div class="table-container" style="margin-top: var(--space-5)">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Vendor</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ===================== REPORTS PAGE ===================== -->
+          <section id="page-reports" class="page-content" style="display: none">
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Reports & Analytics</h1>
+                <p class="page-subtitle">Comprehensive business insights</p>
+              </div>
+              <div class="page-header-actions">
+                <button class="btn btn-secondary" onclick="exportFullReport()">
+                  <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+              </div>
+            </div>
+            <div class="dashboard-stats stagger-children">
+              <div
+                class="stat-card animate-slideUp"
+                onclick="navigateTo('clients')"
+                style="cursor: pointer"
+              >
+                <div class="stat-card-icon primary">
+                  <i class="fas fa-sack-dollar"></i>
+                </div>
+                <div class="stat-card-value" id="statTotalRevenue">₹0</div>
+                <div class="stat-card-label">Total Revenue</div>
+              </div>
+              <div
+                class="stat-card animate-slideUp"
+                onclick="navigateTo('expenses')"
+                style="cursor: pointer"
+              >
+                <div class="stat-card-icon danger">
+                  <i class="fas fa-money-bill-transfer"></i>
+                </div>
+                <div class="stat-card-value" id="statNetProfit">₹0</div>
+                <div class="stat-card-label">Net Profit</div>
+              </div>
+              <div
+                class="stat-card animate-slideUp"
+                onclick="navigateTo('clients')"
+                style="cursor: pointer"
+              >
+                <div class="stat-card-icon accent">
+                  <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-card-value" id="statActiveMembers">0</div>
+                <div class="stat-card-label">Active Members</div>
+              </div>
+              <div
+                class="stat-card animate-slideUp"
+                onclick="navigateTo('attendance')"
+                style="cursor: pointer"
+              >
+                <div class="stat-card-icon info">
+                  <i class="fas fa-percent"></i>
+                </div>
+                <div class="stat-card-value" id="statAvgAttendance">0%</div>
+                <div class="stat-card-label">Avg Attendance</div>
+              </div>
+            </div>
+            <div class="dashboard-grid">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Revenue vs Expenses</h3>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="revExpChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Plan Distribution</h3>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="reportPlanChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-grid" style="margin-top: var(--space-5)">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Monthly Revenue</h3>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="monthlyRevenueChart"></canvas>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Top Performing Trainers</h3>
+                </div>
+                <div class="card-body" id="topTrainersList"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===================== SELF REGISTRATION PORTAL PAGE ===================== -->
+          <section
+            id="page-selfregister"
+            class="page-content"
+            style="display: none"
+          >
+            <div class="page-header">
+              <div class="page-header-left">
+                <h1 class="page-title">Self-Registration Portal</h1>
+                <p class="page-subtitle">
+                  Share this link with members to register themselves
+                </p>
+              </div>
+            </div>
+            <div class="card" style="max-width: 800px; margin: 0 auto">
+              <div class="form-section">
+                <div class="form-section-title">
+                  <i class="fas fa-share-nodes"></i> Portal Setup
+                </div>
+                <p class="text-muted">
+                  Members can register themselves via a public portal link. No
+                  admin login required for self-registration.
+                </p>
+                <div class="form-group">
+                  <label class="form-label">Portal URL</label>
+                  <input
+                    type="text"
+                    class="form-input"
+                    id="selfRegPortalUrl"
+                    readonly
+                    value=""
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Approval Required</label>
+                  <label class="toggle-switch"
+                    ><input
+                      type="checkbox"
+                      id="selfRegApproval"
+                      checked
+                      onchange="
+                        saveSetting('selfRegApproval', this.checked)
+                      " /><span class="toggle-slider"></span
+                  ></label>
+                  <p class="text-muted text-xs">
+                    When ON, self-registered members require admin approval
+                    before activation.
+                  </p>
+                </div>
+                <div class="flex gap-3">
+                  <button class="btn btn-primary" onclick="copySelfRegLink()">
+                    <i class="fas fa-copy"></i> Copy Link
+                  </button>
+                  <button
+                    class="btn btn-secondary"
+                    onclick="openSelfRegPortal()"
+                  >
+                    <i class="fas fa-external-link"></i> Open Portal
+                  </button>
+                  <button class="btn btn-secondary" onclick="exportSelfRegQR()">
+                    <i class="fas fa-qrcode"></i> Download QR
+                  </button>
+                </div>
+              </div>
+              <div class="form-section" style="margin-top: var(--space-6)">
+                <div class="form-section-title">
+                  <i class="fas fa-clock"></i> Pending Approvals
+                </div>
+                <div id="pendingSelfRegList"></div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         MODALS
+         ============================================================ -->
+
+    <!-- Password Verification Modal -->
+    <div id="passwordVerifyModal" class="modal-overlay">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-shield-halved"></i> Admin Verification
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('passwordVerifyModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="text-sm text-muted" style="margin-bottom: var(--space-4)">
+            Enter admin password to continue.
+          </p>
+          <input
+            type="password"
+            class="form-input password-verify-input"
+            id="verifyPasswordInput"
+            placeholder="••••••"
+          />
+          <div id="verifyError" class="form-error" style="display: none">
+            Incorrect password.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('passwordVerifyModal')"
+          >
+            Cancel
+          </button>
+          <button
+            class="btn btn-primary"
+            id="verifyPasswordSubmit"
+            onclick="confirmPasswordVerify()"
+          >
+            Verify
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invoice Preview Modal -->
+    <div id="invoicePreviewModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">Invoice Preview</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('invoicePreviewModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div
+          class="modal-body"
+          style="background: #e5e7eb; padding: var(--space-8)"
+        >
+          <div id="invoicePreviewContent" class="invoice-preview">
+            <!-- Invoice HTML populated by JS -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('invoicePreviewModal')"
+          >
+            <i class="fas fa-times"></i> Close
+          </button>
+          <button class="btn btn-ghost" onclick="sendInvoiceWhatsApp()">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </button>
+          <button class="btn btn-ghost" onclick="sendInvoiceEmail()">
+            <i class="fas fa-envelope"></i> Email
+          </button>
+          <button class="btn btn-primary" onclick="downloadInvoicePDF()">
+            <i class="fas fa-download"></i> Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Profile View Modal -->
+    <div id="clientProfileModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">Client Profile</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('clientProfileModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="clientProfileContent">
+          <!-- Populated by JS -->
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('clientProfileModal')"
+          >
+            Close
+          </button>
+          <button class="btn btn-primary" id="profileEditBtn">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Template Modal -->
+    <div id="addTemplateModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Message Template</h3>
+          <button class="modal-close" onclick="closeModal('addTemplateModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Template Name</label>
+            <input
+              type="text"
+              class="form-input"
+              id="templateName"
+              placeholder="e.g. Birthday Wish"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-select" id="templateCategory">
+              <option value="birthday">Birthday</option>
+              <option value="anniversary">Anniversary</option>
+              <option value="renewal">Renewal Reminder</option>
+              <option value="welcome">Welcome</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message Content</label>
+            <textarea
+              class="form-textarea"
+              id="templateContent"
+              rows="5"
+              placeholder="Use {name} for client name, {gym} for gym name, {date} for date"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('addTemplateModal')"
+          >
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="saveNewTemplate()">
+            <i class="fas fa-save"></i> Save Template
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutConfirmModal" class="modal-overlay">
+      <div class="modal modal-sm">
+        <div class="modal-body" style="padding: var(--space-8)">
+          <div class="confirm-dialog">
+            <div class="confirm-dialog-icon warning">
+              <i class="fas fa-right-from-bracket"></i>
+            </div>
+            <h3>Logout?</h3>
+            <p>Are you sure you want to sign out of H2O Singur Fitness Gym?</p>
+            <div class="flex justify-center gap-3">
+              <button
+                class="btn btn-secondary"
+                onclick="closeModal('logoutConfirmModal')"
+              >
+                Cancel
+              </button>
+              <button class="btn btn-danger" onclick="performLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Slide Panel -->
+    <div id="notificationPanel" class="notification-panel">
+      <div class="notification-panel-header">
+        <h3 class="notification-panel-title">Notifications</h3>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="toggleNotificationPanel()"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="notification-list" id="notificationPanelList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Theme Slide Panel -->
+    <div id="themePanel" class="theme-panel">
+      <div class="theme-panel-header">
+        <h3
+          style="
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+          "
+        >
+          Theme Customizer
+        </h3>
+        <button class="btn btn-ghost btn-sm" onclick="toggleThemePanel()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="theme-panel-body">
+        <div class="theme-section">
+          <div class="theme-section-title">Mode</div>
+          <div class="theme-mode-options">
+            <button
+              class="theme-mode-btn"
+              data-mode="light"
+              onclick="setThemeMode('light')"
+            >
+              <i class="fas fa-sun"></i> Light
+            </button>
+            <button
+              class="theme-mode-btn active"
+              data-mode="dark"
+              onclick="setThemeMode('dark')"
+            >
+              <i class="fas fa-moon"></i> Dark
+            </button>
+          </div>
+        </div>
+        <div class="theme-section">
+          <div class="theme-section-title">Accent Color</div>
+          <div class="theme-color-grid">
+            <div
+              class="theme-color-swatch active"
+              style="background: #10b981"
+              data-accent="emerald"
+              onclick="setAccentColor('emerald', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #ef4444"
+              data-accent="crimson"
+              onclick="setAccentColor('crimson', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #f59e0b"
+              data-accent="amber"
+              onclick="setAccentColor('amber', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #06b6d4"
+              data-accent="ocean"
+              onclick="setAccentColor('ocean', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #8b5cf6"
+              data-accent="violet"
+              onclick="setAccentColor('violet', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #f43f5e"
+              data-accent="rose"
+              onclick="setAccentColor('rose', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #14b8a6"
+              data-accent="teal"
+              onclick="setAccentColor('teal', this)"
+            ></div>
+            <div
+              class="theme-color-swatch"
+              style="background: #84cc16"
+              data-accent="lime"
+              onclick="setAccentColor('lime', this)"
+            ></div>
+          </div>
+        </div>
+        <div class="theme-section">
+          <div class="theme-section-title">Custom Color (Color Wheel)</div>
+          <div class="color-picker-wrapper">
+            <input
+              type="color"
+              class="color-picker-input"
+              id="themeCustomColorPicker"
+              value="#10b981"
+              onchange="setCustomAccentColor(this.value)"
+            />
+            <input
+              type="text"
+              class="color-picker-hex"
+              id="themeCustomColorHex"
+              value="#10b981"
+              placeholder="#hex"
+              onchange="setCustomAccentColor(this.value)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Image Zoom Modal -->
+    <div
+      id="imageZoomModal"
+      class="modal-overlay"
+      onclick="if (event.target === this) closeModal('imageZoomModal');"
+    >
+      <div
+        class="modal modal-lg"
+        style="
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          max-width: none;
+          width: auto;
+        "
+      >
+        <button class="image-zoom-close" onclick="closeModal('imageZoomModal')">
+          <i class="fas fa-times"></i>
+        </button>
+        <img
+          id="imageZoomContent"
+          src=""
+          alt=""
+          style="
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: var(--border-radius-lg);
+          "
+        />
+      </div>
+    </div>
+
+    <!-- Client Attendance Tracker Modal -->
+    <div id="attendanceTrackerModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-clipboard-check"></i>
+            <span id="attendanceTrackerTitle">Attendance Tracker</span>
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('attendanceTrackerModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="filter-bar" style="margin-bottom: var(--space-4)">
+            <span class="filter-label">Period:</span>
+            <button
+              class="btn btn-sm btn-ghost att-period-btn active"
+              data-period="week"
+              onclick="switchAttendancePeriod('week', this)"
+            >
+              Week
+            </button>
+            <button
+              class="btn btn-sm btn-ghost att-period-btn"
+              data-period="month"
+              onclick="switchAttendancePeriod('month', this)"
+            >
+              Month
+            </button>
+            <button
+              class="btn btn-sm btn-ghost att-period-btn"
+              data-period="year"
+              onclick="switchAttendancePeriod('year', this)"
+            >
+              Year
+            </button>
+            <div style="flex: 1"></div>
+            <div class="btn-group">
+              <button
+                class="btn btn-sm btn-ghost att-view-btn active"
+                data-view="graph"
+                onclick="switchAttendanceView('graph', this)"
+              >
+                <i class="fas fa-chart-column"></i> Graph
+              </button>
+              <button
+                class="btn btn-sm btn-ghost att-view-btn"
+                data-view="data"
+                onclick="switchAttendanceView('data', this)"
+              >
+                <i class="fas fa-table"></i> Data
+              </button>
+            </div>
+          </div>
+          <div
+            class="dashboard-stats"
+            style="grid-template-columns: repeat(4, 1fr)"
+          >
+            <div class="stat-card" style="padding: var(--space-4)">
+              <div class="stat-card-value" id="attStatPresent">0</div>
+              <div class="stat-card-label">Days Present</div>
+            </div>
+            <div class="stat-card" style="padding: var(--space-4)">
+              <div class="stat-card-value" id="attStatAbsent">0</div>
+              <div class="stat-card-label">Days Absent</div>
+            </div>
+            <div class="stat-card" style="padding: var(--space-4)">
+              <div class="stat-card-value" id="attStatRate">0%</div>
+              <div class="stat-card-label">Attendance Rate</div>
+            </div>
+            <div class="stat-card" style="padding: var(--space-4)">
+              <div class="stat-card-value" id="attStatStreak">0</div>
+              <div class="stat-card-label">Current Streak</div>
+            </div>
+          </div>
+          <div id="attendanceTrackerContent" style="margin-top: var(--space-4)">
+            <div class="chart-container">
+              <canvas id="individualAttendanceChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('attendanceTrackerModal')"
+          >
+            Close
+          </button>
+          <button class="btn btn-ghost" onclick="exportIndividualAttendance()">
+            <i class="fas fa-file-excel"></i> Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Diet Plan Modal -->
+    <div id="addDietPlanModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">New Diet Plan</h3>
+          <button class="modal-close" onclick="closeModal('addDietPlanModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="dietPlanEditId" />
+          <div class="form-group">
+            <label class="form-label"
+              >Plan Name <span class="required">*</span></label
+            ><input
+              type="text"
+              class="form-input"
+              id="dietPlanName"
+              placeholder="e.g. Weight Loss 30-Day Plan"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Goal Type</label
+              ><select class="form-select" id="dietPlanGoal">
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="Muscle Gain">Muscle Gain</option>
+                <option value="General Fitness">General Fitness</option>
+                <option value="Body Recomposition">Body Recomposition</option>
+                <option value="Sports Specific">Sports Specific</option>
+                <option value="Rehabilitation">Rehabilitation</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Daily Calories</label
+              ><input
+                type="number"
+                class="form-input"
+                id="dietPlanCalories"
+                placeholder="e.g. 2000"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label
+            ><textarea
+              class="form-textarea"
+              id="dietPlanDesc"
+              rows="2"
+              placeholder="Brief plan summary"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              >Daily Plan (one meal per line, format: MealName | Food |
+              Calories)</label
+            ><textarea
+              class="form-textarea"
+              id="dietPlanMeals"
+              rows="6"
+              placeholder="Breakfast | Oats + Banana + Almonds | 450&#10;Lunch | Brown rice + Grilled chicken + Salad | 600&#10;Snack | Greek yogurt + Berries | 200&#10;Dinner | Paneer + Veggies + Quinoa | 500"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned To (optional)</label
+            ><select class="form-select" id="dietPlanClient">
+              <option value="">None</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('addDietPlanModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="saveDietPlan()">
+            <i class="fas fa-save"></i> Save Plan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Diet Plan Modal -->
+    <div id="viewDietPlanModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title" id="viewDietTitle">Diet Plan</h3>
+          <button class="modal-close" onclick="closeModal('viewDietPlanModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="viewDietContent"></div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('viewDietPlanModal')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Exercise Plan Modal -->
+    <div id="addExercisePlanModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">New Exercise Plan</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('addExercisePlanModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="exPlanEditId" />
+          <div class="form-group">
+            <label class="form-label"
+              >Plan Name <span class="required">*</span></label
+            ><input
+              type="text"
+              class="form-input"
+              id="exPlanName"
+              placeholder="e.g. Push-Pull-Legs Split"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Goal Type</label
+              ><select class="form-select" id="exPlanGoal">
+                <option value="Muscle Gain">Muscle Gain</option>
+                <option value="Weight Loss">Weight Loss</option>
+                <option value="Strength">Strength</option>
+                <option value="Endurance">Endurance</option>
+                <option value="Rehabilitation">Rehabilitation</option>
+                <option value="Flexibility">Flexibility</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration (weeks)</label
+              ><input
+                type="number"
+                class="form-input"
+                id="exPlanDuration"
+                placeholder="e.g. 8"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label
+            ><textarea
+              class="form-textarea"
+              id="exPlanDesc"
+              rows="2"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              >Daily Workouts (one per line, format: Day | Exercise | Sets x
+              Reps)</label
+            ><textarea
+              class="form-textarea"
+              id="exPlanWorkouts"
+              rows="6"
+              placeholder="Monday | Bench Press | 4x8&#10;Monday | Incline DB Press | 3x10&#10;Wednesday | Squats | 4x6&#10;Friday | Deadlift | 3x5"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned Trainer</label
+            ><select class="form-select" id="exPlanTrainer">
+              <option value="">None</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned To (optional)</label
+            ><select class="form-select" id="exPlanClient">
+              <option value="">None</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('addExercisePlanModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="saveExercisePlan()">
+            <i class="fas fa-save"></i> Save Plan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Exercise Plan Modal -->
+    <div id="viewExercisePlanModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title" id="viewExTitle">Exercise Plan</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('viewExercisePlanModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="viewExerciseContent"></div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('viewExercisePlanModal')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Group Class Modal -->
+    <div id="addClassModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Schedule Group Class</h3>
+          <button class="modal-close" onclick="closeModal('addClassModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="classEditId" />
+          <div class="form-group">
+            <label class="form-label"
+              >Class Name <span class="required">*</span></label
+            ><input
+              type="text"
+              class="form-input"
+              id="className"
+              placeholder="e.g. Morning HIIT"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Type</label
+              ><select class="form-select" id="classType">
+                <option>Yoga</option>
+                <option>Zumba</option>
+                <option>CrossFit</option>
+                <option>HIIT</option>
+                <option>Spinning</option>
+                <option>Bootcamp</option>
+                <option>Pilates</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trainer</label
+              ><select class="form-select" id="classTrainer"></select>
+            </div>
+          </div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label">Date</label
+              ><input type="date" class="form-input" id="classDate" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time</label
+              ><input type="time" class="form-input" id="classTime" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Capacity</label
+              ><input
+                type="number"
+                class="form-input"
+                id="classCapacity"
+                value="20"
+                min="1"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Duration (min)</label
+              ><input
+                type="number"
+                class="form-input"
+                id="classDuration"
+                value="60"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fee</label
+              ><input
+                type="number"
+                class="form-input"
+                id="classFee"
+                value="0"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('addClassModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="saveClass()">
+            <i class="fas fa-save"></i> Save Class
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Expense</h3>
+          <button class="modal-close" onclick="closeModal('addExpenseModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="expenseEditId" />
+          <div class="form-group">
+            <label class="form-label"
+              >Date <span class="required">*</span></label
+            ><input type="date" class="form-input" id="expenseDate" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label"
+                >Category <span class="required">*</span></label
+              ><select class="form-select" id="expenseCategory">
+                <option value="Rent">Rent</option>
+                <option value="Equipment">Equipment</option>
+                <option value="Salary">Salary</option>
+                <option value="Utilities">Utilities (Electricity/Water)</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Supplies">Supplies</option>
+                <option value="Internet">Internet</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Misc">Misc</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"
+                >Amount <span class="required">*</span></label
+              ><input
+                type="number"
+                class="form-input"
+                id="expenseAmount"
+                required
+                min="0"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label
+            ><input
+              type="text"
+              class="form-input"
+              id="expenseDesc"
+              placeholder="Brief description"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vendor</label
+              ><input type="text" class="form-input" id="expenseVendor" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Mode</label
+              ><select class="form-select" id="expensePayment">
+                <option>Cash</option>
+                <option>UPI</option>
+                <option>Card</option>
+                <option>Bank Transfer</option>
+                <option>Cheque</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('addExpenseModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="saveExpense()">
+            <i class="fas fa-save"></i> Save Expense
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body Measurement Modal -->
+    <div id="bodyMeasurementModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">Body Measurements Progress</h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('bodyMeasurementModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row-4" style="margin-bottom: var(--space-4)">
+            <div class="form-group">
+              <label class="form-label">Date</label
+              ><input type="date" class="form-input" id="bmDate" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Weight (kg)</label
+              ><input
+                type="number"
+                class="form-input"
+                id="bmWeight"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Body Fat %</label
+              ><input
+                type="number"
+                class="form-input"
+                id="bmBodyFat"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Muscle %</label
+              ><input
+                type="number"
+                class="form-input"
+                id="bmMuscle"
+                step="0.1"
+              />
+            </div>
+          </div>
+          <div class="form-row-4" style="margin-bottom: var(--space-4)">
+            <div class="form-group">
+              <label class="form-label">Chest (cm)</label
+              ><input
+                type="number"
+                class="form-input"
+                id="bmChest"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Waist (cm)</label
+              ><input
+                type="number"
+                class="form-input"
+                id="bmWaist"
+                step="0.1"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hips (cm)</label
+              ><input type="number" class="form-input" id="bmHips" step="0.1" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Arms (cm)</label
+              ><input type="number" class="form-input" id="bmArms" step="0.1" />
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveBodyMeasurement()">
+            <i class="fas fa-plus"></i> Add Measurement
+          </button>
+          <div style="margin-top: var(--space-5)">
+            <div class="chart-container">
+              <canvas id="bodyMeasurementChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('bodyMeasurementModal')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loyalty Points Modal -->
+    <div id="loyaltyPointsModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-award"></i> Loyalty Program
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('loyaltyPointsModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="loyaltyPointsContent"></div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('loyaltyPointsModal')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral Modal -->
+    <div id="referralModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-share-from-bracket"></i> Referral Program
+          </h3>
+          <button class="modal-close" onclick="closeModal('referralModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="referralContent"></div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('referralModal')"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Member Feedback</h3>
+          <button class="modal-close" onclick="closeModal('feedbackModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="feedbackClientId" />
+          <div class="form-group">
+            <label class="form-label">Rating</label>
+            <div class="star-rating" id="starRating">
+              <i class="fas fa-star" data-rating="1" onclick="setRating(1)"></i>
+              <i class="fas fa-star" data-rating="2" onclick="setRating(2)"></i>
+              <i class="fas fa-star" data-rating="3" onclick="setRating(3)"></i>
+              <i class="fas fa-star" data-rating="4" onclick="setRating(4)"></i>
+              <i class="fas fa-star" data-rating="5" onclick="setRating(5)"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Feedback Category</label
+            ><select class="form-select" id="feedbackCategory">
+              <option value="Trainer">Trainer Service</option>
+              <option value="Equipment">Equipment</option>
+              <option value="Cleanliness">Cleanliness</option>
+              <option value="Class">Class Quality</option>
+              <option value="Billing">Billing</option>
+              <option value="Overall">Overall Experience</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Comments</label
+            ><textarea
+              class="form-textarea"
+              id="feedbackComments"
+              rows="4"
+              placeholder="Tell us what you think..."
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('feedbackModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="saveFeedback()">
+            <i class="fas fa-paper-plane"></i> Submit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Membership Freeze Modal -->
+    <div id="freezeModal" class="modal-overlay">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-snowflake"></i> Membership Freeze
+          </h3>
+          <button class="modal-close" onclick="closeModal('freezeModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="freezeClientId" />
+          <p class="text-muted text-sm">
+            Freeze membership for vacation/illness. Renewal date will be
+            extended.
+          </p>
+          <div class="form-group">
+            <label class="form-label">From Date</label
+            ><input type="date" class="form-input" id="freezeFrom" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">To Date</label
+            ><input type="date" class="form-input" id="freezeTo" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reason</label
+            ><select class="form-select" id="freezeReason">
+              <option>Vacation</option>
+              <option>Medical</option>
+              <option>Travel</option>
+              <option>Personal</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('freezeModal')">
+            Cancel</button
+          ><button class="btn btn-primary" onclick="applyFreeze()">
+            <i class="fas fa-snowflake"></i> Apply Freeze
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Festival Campaign Modal -->
+    <div id="festivalCampaignModal" class="modal-overlay">
+      <div class="modal modal-lg">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-bullhorn"></i> Festival Campaign
+          </h3>
+          <button
+            class="modal-close"
+            onclick="closeModal('festivalCampaignModal')"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Campaign Name</label
+            ><input
+              type="text"
+              class="form-input"
+              id="campaignName"
+              placeholder="e.g. Diwali Offer 2026"
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Discount %</label
+              ><input
+                type="number"
+                class="form-input"
+                id="campaignDiscount"
+                value="10"
+                min="0"
+                max="100"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Valid Until</label
+              ><input type="date" class="form-input" id="campaignValid" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message Template</label
+            ><textarea class="form-textarea" id="campaignMessage" rows="4">
+🎉 {festival} Special at {gym}! Get {discount}% off on all annual memberships. Limited time only! Visit us today!</textarea
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label">Send To</label>
+            <div class="flex gap-3 items-center">
+              <label class="form-check"
+                ><input type="checkbox" id="campaignAll" checked /> All
+                Members</label
+              >
+              <label class="form-check"
+                ><input type="checkbox" id="campaignActive" /> Active
+                Only</label
+              >
+              <label class="form-check"
+                ><input type="checkbox" id="campaignExpired" /> Expired
+                Only</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('festivalCampaignModal')"
+          >
+            Cancel</button
+          ><button class="btn btn-primary" onclick="launchCampaign()">
+            <i class="fas fa-paper-plane"></i> Launch Campaign
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Modal (Attendance) -->
+    <div id="qrCodeModal" class="modal-overlay">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <i class="fas fa-qrcode"></i> Daily QR Code
+          </h3>
+          <button class="modal-close" onclick="closeModal('qrCodeModal')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" style="text-align: center">
+          <div
+            id="dailyQRCode"
+            style="
+              display: inline-block;
+              padding: 20px;
+              background: white;
+              border-radius: var(--border-radius-lg);
+            "
+          ></div>
+          <p class="text-muted text-sm" style="margin-top: var(--space-3)">
+            Members can scan this QR code to mark their attendance.
+          </p>
+          <p id="qrDateLabel" class="text-sm font-semibold"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- JSZip for folder generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- FileSaver for downloading folders/zip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- Main Application Logic -->
+    <script src="app.js"></script>
+  </body>
+</html>
