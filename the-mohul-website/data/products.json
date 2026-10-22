@@ -1,0 +1,242 @@
+[
+  {
+    "id": "p1",
+    "name": "HD Bridal Foundation Kit",
+    "category": "Bridal",
+    "price": 1800,
+    "oldPrice": 2200,
+    "rating": 4.9,
+    "reviews": 128,
+    "image": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80",
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80"
+    ],
+    "brand": "MAC",
+    "description": "High-definition bridal foundation kit designed for 12+ hour wear. Sweat-proof, humidity resistant, and camera-ready finish for the perfect bridal glow. Includes primer, foundation, and setting powder.",
+    "features": ["12+ hour durability", "HD camera ready", "Sweat & humidity proof", "All skin tones"],
+    "inStock": true,
+    "badge": "Bestseller"
+  },
+  {
+    "id": "p2",
+    "name": "Luxury Eyeshadow Palette - 18 Shades",
+    "category": "Eyes",
+    "price": 1450,
+    "oldPrice": 1700,
+    "rating": 4.8,
+    "reviews": 96,
+    "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80"
+    ],
+    "brand": "Urban Decay",
+    "description": "18 highly-pigmented matte and shimmer shades for every occasion. From natural day looks to bold smokey eyes. Long-lasting, crease-proof formula with rich color payoff.",
+    "features": ["18 versatile shades", "Matte & shimmer", "Crease-proof", "High pigmentation"],
+    "inStock": true,
+    "badge": "Popular"
+  },
+  {
+    "id": "p3",
+    "name": "Airbrush Makeup System Pro",
+    "category": "Tools",
+    "price": 4500,
+    "oldPrice": 5200,
+    "rating": 4.7,
+    "reviews": 54,
+    "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80"
+    ],
+    "brand": "Temptu",
+    "description": "Professional airbrush makeup system for flawless, weightless coverage. Perfect for bridal and editorial work. Includes compressor, airbrush stylus, and 4 foundation shades.",
+    "features": ["Flawless finish", "Weightless coverage", "Pro compressor", "4 shades included"],
+    "inStock": true,
+    "badge": "Premium"
+  },
+  {
+    "id": "p4",
+    "name": "Gold Highlighter Glow Kit",
+    "category": "Face",
+    "price": 980,
+    "oldPrice": 1200,
+    "rating": 4.9,
+    "reviews": 211,
+    "image": "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80",
+      "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=600&q=80"
+    ],
+    "brand": "Charlotte Tilbury",
+    "description": "Achieve that divine bridal glow with our gold highlighter kit. Finely milled powder blends seamlessly for a lit-from-within radiance. Suitable for all skin tones.",
+    "features": ["Lit-from-within glow", "Finely milled", "All skin tones", "Long-lasting"],
+    "inStock": true,
+    "badge": "Trending"
+  },
+  {
+    "id": "p5",
+    "name": "Long-Wear Matte Lipstick Set (6 pcs)",
+    "category": "Lips",
+    "price": 1250,
+    "oldPrice": 1500,
+    "rating": 4.6,
+    "reviews": 87,
+    "image": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80",
+      "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=600&q=80",
+      "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80"
+    ],
+    "brand": "MAC",
+    "description": "Set of 6 long-wearing matte lipsticks in bridal-favorite shades. Transfer-proof, comfortable matte finish that lasts through eating, drinking, and kissing. Rich, opaque color.",
+    "features": ["6 bridal shades", "Transfer-proof", "8-hour wear", "Comfortable matte"],
+    "inStock": true,
+    "badge": null
+  },
+  {
+    "id": "p6",
+    "name": "Professional Brush Set (12 pcs)",
+    "category": "Tools",
+    "price": 1650,
+    "oldPrice": 2000,
+    "rating": 4.8,
+    "reviews": 143,
+    "image": "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1595959183082-7b570b7e08e2?w=600&q=80",
+      "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80",
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80"
+    ],
+    "brand": "Morphe",
+    "description": "Complete 12-piece professional makeup brush set with soft, synthetic bristles. Includes face, eyes, and detail brushes in a luxury roll case. Perfect for professionals and beginners.",
+    "features": ["12 essential brushes", "Soft synthetic bristles", "Luxury roll case", "Vegan"],
+    "inStock": true,
+    "badge": "Bestseller"
+  },
+  {
+    "id": "p7",
+    "name": "Setting Spray - 12 Hour Lock",
+    "category": "Face",
+    "price": 720,
+    "oldPrice": 890,
+    "rating": 4.7,
+    "reviews": 178,
+    "image": "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=600&q=80",
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80"
+    ],
+    "brand": "Smashbox",
+    "description": "Lock in your makeup for up to 12 hours with our humidity-resistant setting spray. Prevents melting, fading, and settling into fine lines. The bridal essential for all-day perfection.",
+    "features": ["12-hour lock", "Humidity resistant", "No melting or fading", "Lightweight mist"],
+    "inStock": true,
+    "badge": null
+  },
+  {
+    "id": "p8",
+    "name": "Kryolan HD Foundation",
+    "category": "Face",
+    "price": 1100,
+    "oldPrice": 1350,
+    "rating": 4.8,
+    "reviews": 92,
+    "image": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80",
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80"
+    ],
+    "brand": "Kryolan",
+    "description": "Professional HD foundation for camera-ready, flawless skin. Buildable coverage with a natural satin finish. Specially formulated for Indian skin tones. Sweat and water resistant.",
+    "features": ["HD camera-ready", "Buildable coverage", "Indian skin tones", "Sweat resistant"],
+    "inStock": true,
+    "badge": "Pro Choice"
+  },
+  {
+    "id": "p9",
+    "name": "NARS Blush & Contour Duo",
+    "category": "Face",
+    "price": 1380,
+    "oldPrice": 1600,
+    "rating": 4.9,
+    "reviews": 76,
+    "image": "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=600&q=80",
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80",
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80"
+    ],
+    "brand": "NARS",
+    "description": "Sculpt and define with this blush and contour duo. Matte contour for cheekbone definition plus a natural flush of color. Silky powder formula blends effortlessly.",
+    "features": ["Sculpt & define", "Silky formula", "Natural flush", "Easy blend"],
+    "inStock": true,
+    "badge": null
+  },
+  {
+    "id": "p10",
+    "name": "Smoky Eye Kajal & Liner Combo",
+    "category": "Eyes",
+    "price": 540,
+    "oldPrice": 680,
+    "rating": 4.7,
+    "reviews": 156,
+    "image": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80",
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80"
+    ],
+    "brand": "Lakme",
+    "description": "Intense black kajal and smudge-proof eyeliner combo for defined, dramatic eyes. Waterproof formula lasts 16 hours without smudging. Perfect for bridal and party looks.",
+    "features": ["Intense black", "16-hour wear", "Waterproof", "Smudge-proof"],
+    "inStock": true,
+    "badge": "Popular"
+  },
+  {
+    "id": "p11",
+    "name": "Anastasia Brow Kit",
+    "category": "Eyes",
+    "price": 860,
+    "oldPrice": 1050,
+    "rating": 4.8,
+    "reviews": 119,
+    "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80"
+    ],
+    "brand": "Anastasia",
+    "description": "Complete brow shaping kit with pomade, powder, and angled brush. Create natural, defined brows that frame your face perfectly. Long-wearing, smudge-proof formula.",
+    "features": ["Full brow kit", "Pomade + powder", "Angled brush", "Smudge-proof"],
+    "inStock": true,
+    "badge": null
+  },
+  {
+    "id": "p12",
+    "name": "Pre-Bridal Skin Prep Kit",
+    "category": "Bridal",
+    "price": 2400,
+    "oldPrice": 2900,
+    "rating": 4.9,
+    "reviews": 64,
+    "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
+      "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600&q=80"
+    ],
+    "brand": "Fixderma",
+    "description": "Complete pre-bridal skincare prep kit. Cleanser, primer, moisturizer, and brightening serum to prep your skin for flawless makeup application. 7-day bridal glow routine.",
+    "features": ["7-day routine", "Primer included", "Brightening serum", "All skin types"],
+    "inStock": true,
+    "badge": "Bridal Essential"
+  }
+]

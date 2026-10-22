@@ -1,0 +1,25 @@
+# robots.txt — The Mohul Makeup & Beauty Studio
+# Allow all bots to crawl the entire site
+
+User-agent: *
+Allow: /
+Disallow:
+
+# Allow GPTBot for content summarization (LLM training)
+User-agent: GPTBot
+Allow: /
+
+# Allow ClaudeBot
+User-agent: ClaudeBot
+Allow: /
+
+# Allow Google-Extended
+User-agent: Google-Extended
+Allow: /
+
+# Allow PerplexityBot
+User-agent: PerplexityBot
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.themohulmakeup.in/sitemap.xml
